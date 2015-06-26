@@ -61,12 +61,17 @@ class gettext_reader {
    * @return Integer from the Stream
    */
   function readint() {
+	  $bytes = $this->STREAM->read(4);
       if ($this->BYTEORDER == 0) {
         // low endian
-        return array_shift(unpack('V', $this->STREAM->read(4)));
+		$int = unpack('V', $bytes);
+		return array_shift($int);
+        //return array_shift(unpack('V', $this->STREAM->read(4)));
       } else {
         // big endian
-        return array_shift(unpack('N', $this->STREAM->read(4)));
+		$int = unpack('N', $bytes);
+		return array_shift($int);
+        //return array_shift(unpack('N', $this->STREAM->read(4)));
       }
     }
 
