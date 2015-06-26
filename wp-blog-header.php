@@ -1,6 +1,7 @@
 <?php
-
+//检测变量$wp_did_heeader是否设置
 if (! isset($wp_did_header)):
+//给出一个包含有指向一个文件的全路径的字符串，本函数返回去掉文件名后的目录名
 if ( !file_exists( dirname(__FILE__) . '/wp-config.php') ) {
 	if ( strstr( $_SERVER['PHP_SELF'], 'wp-admin') ) $path = '';
 	else $path = 'wp-admin/';

@@ -10,7 +10,9 @@ function unregister_GLOBALS() {
 	// Variables that shouldn't be unset
 	$noUnset = array('GLOBALS', '_GET', '_POST', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES', 'table_prefix');
 	
+	//合并数组
 	$input = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV, $_FILES, isset($_SESSION) && is_array($_SESSION) ? $_SESSION : array());
+	//判断是否在数组内
 	foreach ( $input as $k => $v ) 
 		if ( !in_array($k, $noUnset) && isset($GLOBALS[$k]) )
 			unset($GLOBALS[$k]);
@@ -28,6 +30,7 @@ if (! isset($_SERVER['REQUEST_URI'])) {
 	$_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'];
 	
 	// Append the query string if it exists and isn't null
+	//追加查询字符
 	if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
 		$_SERVER['REQUEST_URI'] .= '?' . $_SERVER['QUERY_STRING'];
 	}
@@ -36,6 +39,7 @@ if (! isset($_SERVER['REQUEST_URI'])) {
 if ( !(phpversion() >= '4.1') )
 	die( 'Your server is running PHP version ' . phpversion() . ' but WordPress requires at least 4.1' );
 
+//判断mysql扩展是否已经加载
 if ( !extension_loaded('mysql') )
 	die( 'Your PHP installation appears to be missing the MySQL which is required for WordPress.' );
 
@@ -49,6 +53,7 @@ function timer_start() {
 timer_start();
 
 // Change to E_ALL for development/debugging
+//显示除了提示级别之外的所有错误
 error_reporting(E_ALL ^ E_NOTICE);
 
 // For an advanced caching plugin to use, static because you would only want one
@@ -59,7 +64,7 @@ define('WPINC', 'wp-includes');
 require_once (ABSPATH . WPINC . '/wp-db.php');
 
 // Table names
-$wpdb->posts            = $table_prefix . 'posts';//wp-config.php中定义
+$wpdb->posts            = $table_prefix . 'posts';
 $wpdb->users            = $table_prefix . 'users';
 $wpdb->categories       = $table_prefix . 'categories';
 $wpdb->post2cat         = $table_prefix . 'post2cat';
