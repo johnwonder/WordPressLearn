@@ -130,6 +130,7 @@ class wpdb {
 		$this->flush();
 
 		// Log how the function was called
+		//¼ÇÂ¼ÈÕÖ¾
 		$this->func_call = "\$db->query(\"$query\")";
 
 		// Keep track of the last query for debug..
@@ -139,8 +140,10 @@ class wpdb {
 		if (SAVEQUERIES)
 			$this->timer_start();
 		
+		//echo $query;
 		$this->result = @mysql_query($query, $this->dbh);
 		++$this->num_queries;
+
 
 		if (SAVEQUERIES)
 			$this->queries[] = array( $query, $this->timer_stop() );

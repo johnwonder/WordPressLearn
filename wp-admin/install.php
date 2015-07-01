@@ -1,5 +1,6 @@
 <?php
 define('WP_INSTALLING', true);
+//判断受否存在wp-config.php
 if (!file_exists('../wp-config.php')) 
     die("There doesn't seem to be a <code>wp-config.php</code> file. I need this before we can get started. Need more help? <a href='http://wordpress.org/docs/faq/#wp-config'>We got it</a>. You can <a href='setup-config.php'>create a <code>wp-config.php</code> file through a web interface</a>, but this doesn't work for all server setups. The safest way is to manually create the file.");
 
@@ -121,6 +122,7 @@ switch($step) {
 $weblog_title = $_POST['weblog_title'];
 $admin_email = $_POST['admin_email'];
 // check e-mail address
+//检查邮件地址
 if (empty($admin_email)) {
 	die (__("<strong>ERROR</strong>: please type your e-mail address"));
 } else if (!is_email($admin_email)) {
@@ -136,30 +138,33 @@ if (empty($admin_email)) {
 flush();
 
 // Set everything up
-make_db_current_silent();
+echo "111";
+make_db_current_silent();//在upgrade-functions.php中
 populate_options();
 
 $wpdb->query("UPDATE $wpdb->options SET option_value = '$weblog_title' WHERE option_name = 'blogname'");
 $wpdb->query("UPDATE $wpdb->options SET option_value = '$admin_email' WHERE option_name = 'admin_email'");
 
+
 // Now drop in some default links
-$wpdb->query("INSERT INTO $wpdb->linkcategories (cat_id, cat_name) VALUES (1, '".addslashes(__('Blogroll'))."')");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://blog.carthik.net/index.php', 'Carthik', 1, 'http://blog.carthik.net/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://blogs.linux.ie/xeer/', 'Donncha', 1, 'http://blogs.linux.ie/xeer/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://zengun.org/weblog/', 'Michel', 1, 'http://zengun.org/weblog/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://boren.nu/', 'Ryan', 1, 'http://boren.nu/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://photomatt.net/', 'Matt', 1, 'http://xml.photomatt.net/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://zed1.com/journalized/', 'Mike', 1, 'http://zed1.com/journalized/feed/');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://www.alexking.org/', 'Alex', 1, 'http://www.alexking.org/blog/wp-rss2.php');");
-$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss) VALUES ('http://dougal.gunters.org/', 'Dougal', 1, 'http://dougal.gunters.org/feed/');");
+//会报link_notes没有默认值
+$wpdb->query("INSERT INTO $wpdb->linkcategories (cat_id, cat_name) VALUES (1, '".addslashes(__('Blogroll'))."')");//使用反斜线引用字符串 
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://blog.carthik.net/index.php', 'Carthik', 1, 'http://blog.carthik.net/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://blogs.linux.ie/xeer/', 'Donncha', 1, 'http://blogs.linux.ie/xeer/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://zengun.org/weblog/', 'Michel', 1, 'http://zengun.org/weblog/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://boren.nu/', 'Ryan', 1, 'http://boren.nu/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://photomatt.net/', 'Matt', 1, 'http://xml.photomatt.net/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://zed1.com/journalized/', 'Mike', 1, 'http://zed1.com/journalized/feed/','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://www.alexking.org/', 'Alex', 1, 'http://www.alexking.org/blog/wp-rss2.php','');");
+$wpdb->query("INSERT INTO $wpdb->links (link_url, link_name, link_category, link_rss,link_notes) VALUES ('http://dougal.gunters.org/', 'Dougal', 1, 'http://dougal.gunters.org/feed/','');");
 
 // Default category
-$wpdb->query("INSERT INTO $wpdb->categories (cat_ID, cat_name, category_nicename) VALUES ('0', '".addslashes(__('Uncategorized'))."', '".sanitize_title(__('Uncategorized'))."')");
+$wpdb->query("INSERT INTO $wpdb->categories (cat_ID, cat_name, category_nicename,category_description) VALUES ('0', '".addslashes(__('Uncategorized'))."', '".sanitize_title(__('Uncategorized'))."','')");
 
 // First post
 $now = date('Y-m-d H:i:s');
-$now_gmt = gmdate('Y-m-d H:i:s');
-$wpdb->query("INSERT INTO $wpdb->posts (post_author, post_date, post_date_gmt, post_content, post_title, post_category, post_name, post_modified, post_modified_gmt) VALUES ('1', '$now', '$now_gmt', '".addslashes(__('Welcome to WordPress. This is your first post. Edit or delete it, then start blogging!'))."', '".addslashes(__('Hello world!'))."', '0', '".addslashes(__('hello-world'))."', '$now', '$now_gmt')");
+$now_gmt = gmdate('Y-m-d H:i:s');//同 date()  函数完全一样，只除了返回的时间是格林威治标准时（GMT）。
+$wpdb->query("INSERT INTO $wpdb->posts (post_author, post_date, post_date_gmt, post_content, post_title, post_category, post_name, post_modified, post_modified_gmt,post_excerpt,to_ping,pinged,post_content_filtered) VALUES ('1', '$now', '$now_gmt', '".addslashes(__('Welcome to WordPress. This is your first post. Edit or delete it, then start blogging!'))."', '".addslashes(__('Hello world!'))."', '0', '".addslashes(__('hello-world'))."', '$now', '$now_gmt','','','','')");
 
 $wpdb->query( "INSERT INTO $wpdb->post2cat (`rel_id`, `post_id`, `category_id`) VALUES (1, 1, 1)" );
 
@@ -168,7 +173,7 @@ $wpdb->query("INSERT INTO $wpdb->comments (comment_post_ID, comment_author, comm
 
 // Set up admin user
 $random_password = substr(md5(uniqid(microtime())), 0, 6);
-$wpdb->query("INSERT INTO $wpdb->users (ID, user_login, user_pass, user_nickname, user_email, user_level, user_idmode, user_registered) VALUES ( '1', 'admin', MD5('$random_password'), '".addslashes(__('Administrator'))."', '$admin_email', '10', 'nickname', NOW() )");
+$wpdb->query("INSERT INTO $wpdb->users (ID, user_login, user_pass, user_nickname, user_email, user_level, user_idmode, user_registered,user_description) VALUES ( '1', 'admin', MD5('$random_password'), '".addslashes(__('Administrator'))."', '$admin_email', '10', 'nickname', NOW(),'')");
 
 $message_headers = 'From: ' . stripslashes($_POST['weblog_title']) . ' <wordpress@' . $_SERVER['SERVER_NAME'] . '>';
 $message = sprintf(__("Your new WordPress blog has been successfully set up at:
@@ -186,7 +191,7 @@ We hope you enjoy your new weblog. Thanks!
 http://wordpress.org/
 "), $guessurl, $random_password);
 
-@mail($admin_email, __('New WordPress Blog'), $message, $message_headers);
+@mail($admin_email, __('New WordPress Blog'), $message, $message_headers);//如果 % 符号多于 arg 参数，则您必须使用占位符。占位符被插入 % 符号之后，由数字和 "\$" 组成。
 
 upgrade_all();
 ?>

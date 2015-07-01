@@ -100,6 +100,7 @@ function smiliescmp ($a, $b) {
 uksort($wpsmiliestrans, 'smiliescmp');
 
 // generates smilies' search & replace arrays
+//这里循环了get_settings(siteurl)
 foreach($wpsmiliestrans as $smiley => $img) {
 	$wp_smiliessearch[] = $smiley;
 	$smiley_masked = htmlspecialchars( trim($smiley) , ENT_QUOTES);

@@ -61,7 +61,7 @@ if ( defined('WP_CACHE') )
 	require (ABSPATH . 'wp-content/advanced-cache.php');
 
 define('WPINC', 'wp-includes');
-require_once (ABSPATH . WPINC . '/wp-db.php');
+require_once (ABSPATH . WPINC . '/wp-db.php');//这里引入$wpdb
 
 // Table names
 $wpdb->posts            = $table_prefix . 'posts';
@@ -94,6 +94,8 @@ require (ABSPATH . WPINC . '/default-filters.php');
 require_once (ABSPATH . WPINC . '/wp-l10n.php');
 
 $wpdb->hide_errors();
+//update_user_cache在functions.php中 查找users表
+////调用SELECT * FROM $wpdb->users WHERE user_level > 0
 if ( !update_user_cache() && (!strstr($_SERVER['PHP_SELF'], 'install.php') && !defined('WP_INSTALLING')) ) {
 	if ( strstr($_SERVER['PHP_SELF'], 'wp-admin') )
 		$link = 'install.php';
@@ -115,17 +117,19 @@ require (ABSPATH . WPINC . '/comment-functions.php');
 require (ABSPATH . WPINC . '/feed-functions.php');
 require (ABSPATH . WPINC . '/links.php');
 require (ABSPATH . WPINC . '/kses.php');
-require (ABSPATH . WPINC . '/version.php');
+require (ABSPATH . WPINC . '/version.php');//只有一个版本号
 
+//strstr查找字符串的首次出现
 if (!strstr($_SERVER['PHP_SELF'], 'install.php') && !strstr($_SERVER['PHP_SELF'], 'wp-admin/import')) :
     // Used to guarantee unique hash cookies
+	//echo "ssss";
     $cookiehash = md5(get_settings('siteurl')); // Remove in 1.4
 	define('COOKIEHASH', $cookiehash); 
 endif;
 
-require (ABSPATH . WPINC . '/vars.php');
+require (ABSPATH . WPINC . '/vars.php');//这里循环调用图片
 
-do_action('core_files_loaded');
+do_action('core_files_loaded');//在functions.php中
 
 // Check for hacks file if the option is enabled
 if (get_settings('hack_file')) {
@@ -153,6 +157,7 @@ do_action('plugins_loaded');
 define('TEMPLATEPATH', get_template_directory());
 
 // Load the default text localization domain.
+//加载默认区域语言
 load_default_textdomain();
 
 // Pull in locale data after loading text domain.

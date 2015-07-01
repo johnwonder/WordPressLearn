@@ -59,7 +59,7 @@ CREATE TABLE $wpdb->links (
   link_rating int(11) NOT NULL default '0',
   link_updated datetime NOT NULL default '0000-00-00 00:00:00',
   link_rel varchar(255) NOT NULL default '',
-  link_notes mediumtext NOT NULL,
+  link_notes mediumtext NOT NULL default '',
   link_rss varchar(255) NOT NULL default '',
   PRIMARY KEY  (link_id),
   KEY link_category (link_category),
@@ -104,7 +104,7 @@ CREATE TABLE $wpdb->posts (
   post_content longtext NOT NULL,
   post_title text NOT NULL,
   post_category int(4) NOT NULL default '0',
-  post_excerpt text NOT NULL,
+  post_excerpt text NOT NULL default '',
   post_status enum('publish','draft','private','static','object') NOT NULL default 'publish',
   comment_status enum('open','closed','registered_only') NOT NULL default 'open',
   ping_status enum('open','closed') NOT NULL default 'open',
@@ -143,14 +143,14 @@ CREATE TABLE $wpdb->users (
   user_idmode varchar(20) NOT NULL default '',
   user_activation_key varchar(60) NOT NULL default '',
   user_status int(11) NOT NULL default '0',
-  user_description longtext NOT NULL default '',
+  user_description longtext NOT NULL,
   PRIMARY KEY  (ID),
   UNIQUE KEY user_login (user_login)
 );";
 
 function populate_options() {
 	global $wpdb;
-
+	//在functions.php中调用add_option
 	$guessurl = preg_replace('|/wp-admin/.*|i', '', 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 	add_option('siteurl', $guessurl, __('WordPress web address'));
 	add_option('blogname', __('My Weblog'), __('Blog title'));

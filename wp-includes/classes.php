@@ -1214,7 +1214,7 @@ class WP_Rewrite {
 		if ( ! $this->using_permalinks()) {
 			return '';
 		}
-
+		//echo "mod_rewrite";
 		$site_root = parse_url(get_settings('siteurl'));
 		$site_root = trailingslashit($site_root['path']);
 
@@ -1285,14 +1285,16 @@ class WP_Rewrite {
 			$this->init();
 		}
 	}
-
+	//¹¹Ôìº¯Êý
 	function WP_Rewrite() {
+		//echo _e("construct");
 		$this->init();
 	}
 }
 
 // Make a global instance.
 if (! isset($wp_rewrite)) {
+	//echo _e("int");
     $wp_rewrite = new WP_Rewrite();
 }
 

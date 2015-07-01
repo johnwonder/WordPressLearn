@@ -4,7 +4,7 @@ require_once(ABSPATH . '/wp-admin/admin-functions.php');
 require_once(ABSPATH . '/wp-admin/upgrade-schema.php');
 // Functions to be called in install and upgrade scripts
 function upgrade_all() {
-	populate_options();
+	populate_options();//在admin-schema.php中
 	upgrade_100();
 	upgrade_101();
 	upgrade_110();
@@ -330,8 +330,8 @@ function dbDelta($queries, $execute = true) {
 	
 	// Seperate individual queries into an array
 	if( !is_array($queries) ) {
-		$queries = explode( ';', $queries );
-		if('' == $queries[count($queries) - 1]) array_pop($queries);
+		$queries = explode( ';', $queries );//根据;分割
+		if('' == $queries[count($queries) - 1]) array_pop($queries);//将数组最后一个单元弹出（出栈） 
 	}
 	
 	$cqueries = array(); // Creation Queries
@@ -340,7 +340,7 @@ function dbDelta($queries, $execute = true) {
 	
 	// Create a tablename index for an array ($cqueries) of queries
 	foreach($queries as $qry) {
-		if(preg_match("|CREATE TABLE ([^ ]*)|", $qry, $matches)) {
+		if(preg_match("|CREATE TABLE ([^ ]*)|", $qry, $matches)) {//正则匹配
 			$cqueries[strtolower($matches[1])] = $qry;
 			$for_update[$matches[1]] = 'Created table '.$matches[1];
 		}
@@ -537,9 +537,9 @@ function make_db_current() {
 }
 
 function make_db_current_silent() {
-	global $wp_queries;
+	global $wp_queries;//Create Tables 在upgrate-schema.php里
 
-	$alterations = dbDelta($wp_queries);
+	$alterations = dbDelta($wp_queries);//dbDelta在upgrade-functions.php中。
 }
 
 function make_site_theme_from_oldschool($theme_name, $template) {

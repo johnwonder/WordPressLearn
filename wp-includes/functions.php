@@ -235,7 +235,11 @@ function get_settings($setting) {
 		return false;
 
 	if ( empty($cache_settings) )
+	{
+		//echo $setting;
 		$cache_settings = get_alloptions();
+	}
+	
 
 	if ( empty($cache_nonexistantoptions) )
 		$cache_nonexistantoptions = array();
@@ -286,7 +290,7 @@ function get_alloptions() {
 		if ('siteurl' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
 		if ('home' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
 		if ('category_base' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
-		@ $value = unserialize($option->option_value);
+		@ $value = unserialize($option->option_value); ///@是PHP提供的错误信息屏蔽的专用符号
 		if ($value === FALSE)
 			$value = $option->option_value;
 		$all_options->{$option->option_name} = apply_filters('pre_option_' . $option->option_name, $value);
