@@ -229,6 +229,7 @@ function url_to_postid($url) {
 
 /* Options functions */
 
+
 function get_settings($setting) {
   global $wpdb, $cache_settings, $cache_nonexistantoptions;
 	if ( strstr($_SERVER['REQUEST_URI'], 'wp-admin/install.php') || defined('WP_INSTALLING') )
@@ -237,7 +238,9 @@ function get_settings($setting) {
 	if ( empty($cache_settings) )
 	{
 		//echo $setting;
+		//getoptions(); 
 		$cache_settings = get_alloptions();
+		//var_export($cache_settings);
 	}
 	
 
@@ -293,7 +296,11 @@ function get_alloptions() {
 		@ $value = unserialize($option->option_value); ///@是PHP提供的错误信息屏蔽的专用符号
 		if ($value === FALSE)
 			$value = $option->option_value;
-		$all_options->{$option->option_name} = apply_filters('pre_option_' . $option->option_name, $value);
+		
+		//echo $option->option_name;
+		$all_options = new stdClass();  //这里在PHP高版本下 必须调用
+		
+		$all_options->{$option->option_name} =  apply_filters('pre_option_' . $option->option_name, $value);
 	}
 	return apply_filters('all_options', $all_options);
 }
@@ -895,15 +902,54 @@ function merge_filters($tag) {
 			$wp_filter[$tag][$priority] = array_unique($wp_filter[$tag][$priority]);
 		}
 	}
+	else
+	{
+		//echo 'no set all\n';
+	}
 
 	if ( isset($wp_filter[$tag]) )
 		ksort( $wp_filter[$tag] );
+	else
+	{
+		//if($tag == 'all_options')
+		//echo 'not'.$tag;
+	}
 }
 
+//$tag必须，过滤器钩子的名称，
+//$value必须，可以被过滤器函数修改的值
+//$var 可选，若干个可以传递给过滤器函数的参数
+//过滤器(过滤器函数)的任务是要改变对象或变量的值
 function apply_filters($tag, $string) {
+	//echo $tag;
 	global $wp_filter;
 	
-	$args = array_slice(func_get_args(), 2);
+	
+	//$numargs  =  func_num_args ();
+    //echo  "参数数量:  $numargs <br />\n" ;
+    //if ( $numargs  >=  2 ) {
+		//$arg = func_get_arg(1);
+        //echo  "第二个参数是: "  . $arg .  "<br />\n" ;
+    //}
+
+	//$arg_list =  func_get_args();
+	 //for ( $i  =  0 ;  $i  <  $numargs ;  $i ++) {
+        //echo  "参数  $i  is: "  .  $arg_list [ $i ] .  "<br />\n" ;
+    //}
+
+	//$argsss = func_get_args();
+	//var_dump($argsss);
+
+	//arrar_slice 返回根据 offset 和 length 参数所指定的 array 数组中的一段序列
+	
+	//$input  = array( "a" ,  "b");
+	// note the differences in the array keys
+	//print_r ( array_slice ( $input ,  1 ));
+
+	
+	
+	$args = array_slice(func_get_args(), 2);//获取第三个参数开始的参数数组
+	//print_r($args);
 
 	merge_filters($tag);
 	
@@ -911,10 +957,11 @@ function apply_filters($tag, $string) {
 		return $string;
 	}
 	foreach ($wp_filter[$tag] as $priority => $functions) {
+		//echo $tag.'sss';//显示 bloginfo
 		if (!is_null($functions)) {
 			foreach($functions as $function) {
-
-				$all_args = array_merge(array($string), $args);
+				//var_dump($function);
+				$all_args = array_merge(array($string), $args);// 合并一个或多个数组 
 				$function_name = $function['function'];
 				$accepted_args = $function['accepted_args'];
 
@@ -927,7 +974,7 @@ function apply_filters($tag, $string) {
 				} else {
 					$the_args = $all_args;
 				}
-
+				//调用回调函数，并把一个数组参数作为回调函数的参数 
 				$string = call_user_func_array($function_name, $the_args);
 			}
 		}
@@ -970,7 +1017,7 @@ function remove_filter($tag, $function_to_remove, $priority = 10, $accepted_args
 }
 
 // The *_action functions are just aliases for the *_filter functions, they take special strings instead of generic content
-
+//只是执行函数
 function do_action($tag, $arg = '') {
 	global $wp_filter;
 	$extra_args = array_slice(func_get_args(), 2);
@@ -1422,6 +1469,7 @@ function get_template() {
 	return apply_filters('template', get_settings('template'));
 }
 
+//在wp_settings.php中定义
 function get_template_directory() {
 	$template = get_template();
 	$template_dir = get_theme_root() . "/$template";

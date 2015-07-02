@@ -204,6 +204,8 @@ if ($pagenow != 'post.php' && $pagenow != 'edit.php') {
 }
 
 // Template redirection
+//index.php中默认定义了WP_USE_THEMES
+//constant($name) 返回一个常量的值 
 if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 	do_action('template_redirect');
 	if ( is_feed() && empty($doing_rss) ) {

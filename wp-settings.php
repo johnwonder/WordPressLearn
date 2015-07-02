@@ -90,7 +90,7 @@ $tableoptions = $wpdb->options;
 $tablepostmeta = $wpdb->postmeta;
 
 require (ABSPATH . WPINC . '/functions.php');
-require (ABSPATH . WPINC . '/default-filters.php');
+require (ABSPATH . WPINC . '/default-filters.php');//在这里调用add_filter 并加入$wp_filter
 require_once (ABSPATH . WPINC . '/wp-l10n.php');
 
 $wpdb->hide_errors();
@@ -154,6 +154,7 @@ if ( defined('WP_CACHE') && function_exists('wp_cache_postload') )
 
 do_action('plugins_loaded');
 
+//get_template_directory()函数在 functions.php中定义
 define('TEMPLATEPATH', get_template_directory());
 
 // Load the default text localization domain.

@@ -247,7 +247,7 @@ function get_comment_text() {
 	global $comment;
 	return apply_filters('get_comment_text', $comment->comment_content);
 }
-
+//这里调用了comment_text 里面还调用了wpautop函数 
 function comment_text() {
 	echo apply_filters('comment_text', get_comment_text() );
 }

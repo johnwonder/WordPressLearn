@@ -3,7 +3,7 @@
 	<div id="content" class="narrowcolumn">
 
 	<?php if (have_posts()) : ?>
-		
+
 		<?php while (have_posts()) : the_post(); ?>
 				
 			<div class="post" id="post-<?php the_ID(); ?>">
@@ -11,7 +11,8 @@
 				<small><?php the_time('F jS, Y') ?> <!-- by <?php the_author() ?> --></small>
 				
 				<div class="entry">
-					<?php the_content('Read the rest of this entry &raquo;'); ?>
+                    <!--在这里出错了-->
+				<!--	<?php the_content('Read the rest of this entry &raquo;'); ?>-->
 				</div>
 		
 				<p class="postmetadata">Posted in <?php the_category(', ') ?> <strong>|</strong> <?php edit_post_link('Edit','','<strong>|</strong>'); ?>  <?php comments_popup_link('No Comments &#187;', '1 Comment &#187;', '% Comments &#187;'); ?></p>
