@@ -260,8 +260,11 @@ function get_settings($setting) {
 		$option = $wpdb->get_var("SELECT option_value FROM $wpdb->options WHERE option_name = '$setting'");
 
 		if (!$option) :
-			$cache_nonexistantoptions[$setting] = true;
-			return false;
+        {
+            //echo $setting; 这里会出现gzipcompression
+            $cache_nonexistantoptions[$setting] = true;
+            return false;
+        }
 		endif;
 
 		@ $kellogs = unserialize($option);
@@ -299,7 +302,7 @@ function get_alloptions() {
 		
 		//echo $option->option_name;
 		$all_options = new stdClass();  //这里在PHP高版本下 必须调用
-		
+		//应该是开发者自己加过滤器 从而可以调用pre_option_option方法
 		$all_options->{$option->option_name} =  apply_filters('pre_option_' . $option->option_name, $value);
 	}
 	return apply_filters('all_options', $all_options);
@@ -493,7 +496,8 @@ function &get_post(&$post, $output = OBJECT) {
 			$post = & $post_cache[$post];
 		else {
 			$query = "SELECT * FROM $wpdb->posts WHERE ID=$post";
-			$post_cache[$post] = & $wpdb->get_row($query);
+            $rowresult = $wpdb->get_row($query);//必须定义变量
+			$post_cache[$post] = & $rowresult;
 			$post = & $post_cache[$post];
 		}
 	}
@@ -924,7 +928,8 @@ function apply_filters($tag, $string) {
 	//echo $tag;
 	global $wp_filter;
 	
-	
+//	if($tag == 'the_permalink')
+//        echo $tag;
 	//$numargs  =  func_num_args ();
     //echo  "参数数量:  $numargs <br />\n" ;
     //if ( $numargs  >=  2 ) {
@@ -954,6 +959,7 @@ function apply_filters($tag, $string) {
 	merge_filters($tag);
 	
 	if (!isset($wp_filter[$tag])) {
+        //echo $tag;
 		return $string;
 	}
 	foreach ($wp_filter[$tag] as $priority => $functions) {

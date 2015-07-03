@@ -97,15 +97,19 @@ function wp_login($username, $password, $already_md5 = false) {
 	}
 
 	$login = $wpdb->get_row("SELECT ID, user_login, user_pass FROM $wpdb->users WHERE user_login = '$username'");
-
+     //echo "查询";
 	if (!$login) {
 		$error = __('<strong>Error</strong>: Wrong username.');
 		return false;
 	} else {
 		// If the password is already_md5, it has been double hashed.
 		// Otherwise, it is plain text.
-		if ( ($already_md5 && $login->user_login == $username && md5($login->user_pass) == $password) || ($login->user_login == $username && $login->user_pass == md5($password)) ) {
-			return true;
+        //echo "查询";
+        //var_dump($already_md5);
+        $password ='';
+		if ( ($already_md5 && $login->user_login == $username && md5($login->user_pass) == $password) || ($login->user_login == $username && $login->user_pass == '') ) {
+			echo 'yes';
+            return true;
 		} else {
 			$error = __('<strong>Error</strong>: Incorrect password.');
 			$pwd = '';

@@ -2,6 +2,7 @@
 require( dirname(__FILE__) . '/wp-config.php' );
 
 $action = $_REQUEST['action'];
+//var_dump($action);
 $error = '';
 
 header('Expires: Wed, 11 Jan 1984 05:00:00 GMT');
@@ -184,7 +185,7 @@ default:
 		$user = get_userdatabylogin($user_login);
 		if ( 0 == $user->user_level )
 			$redirect_to = get_settings('siteurl') . '/wp-admin/profile.php';
-
+        //echo "开始登录";
 		if ( wp_login($user_login, $user_pass, $using_cookie) ) {
 			if (! $using_cookie) {
 				wp_setcookie($user_login, $user_pass);

@@ -73,11 +73,16 @@ function wpautop($pee, $br = 1) {
 	if ($br) $pee = preg_replace('|(?<!<br />)\s*\n|', "<br />\n", $pee); // optionally make line breaks
 	$pee = preg_replace('!(</?(?:table|thead|tfoot|caption|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|form|blockquote|address|math|p|h[1-6])[^>]*>)\s*<br />!', "$1", $pee);
 	$pee = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)>)!', '$1', $pee);
-	$pee = preg_replace('!(<pre.*?>)(.*?)</pre>!ise', " stripslashes('$1') .  clean_pre('$2')  . '</pre>' ", $pee);
-	
-	return $pee; 
+	/*$pee = preg_replace_callback('!(<pre.*?>)(.*?)</pre>!ise', " stripslashes('$1') .  clean_pre('$2')  . '</pre>' ", $pee);*/
+	$pee = preg_replace_callback('!(<pre.*?>)(.*?)</pre>!is','my_callback',$pee);//去掉e就正常
+	//如果在正则表达式里有很多/, 那使用/当封闭符号时, 里面的/就得写成\/, 为了省事, 把左右的符号换成别的, 如#,!,...这些, 里面的/就不用转义了.
+
+    return $pee;
 }
 
+function my_callback($text){
+	return stripslashes('$text[1]'). clean_pre('$text[2]') . '</pre>';
+}
 
 function seems_utf8($Str) { # by bmorel at ssi dot fr
 	for ($i=0; $i<strlen($Str); $i++) {

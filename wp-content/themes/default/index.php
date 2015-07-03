@@ -4,6 +4,12 @@
 
 	<?php if (have_posts()) : ?>
 
+        <?php
+//have_posts()函数中初始化为0
+//        global $wp_query;
+//        echo $wp_query->current_post;//显示-1
+//        echo $wp_query->post_count;//显示2
+        ?>
 		<?php while (have_posts()) : the_post(); ?>
 				
 			<div class="post" id="post-<?php the_ID(); ?>">
@@ -12,7 +18,7 @@
 				
 				<div class="entry">
                     <!--在这里出错了-->
-				<!--	<?php the_content('Read the rest of this entry &raquo;'); ?>-->
+				 <?php the_content('Read the rest of this entry &raquo;'); ?>
 				</div>
 		
 				<p class="postmetadata">Posted in <?php the_category(', ') ?> <strong>|</strong> <?php edit_post_link('Edit','','<strong>|</strong>'); ?>  <?php comments_popup_link('No Comments &#187;', '1 Comment &#187;', '% Comments &#187;'); ?></p>

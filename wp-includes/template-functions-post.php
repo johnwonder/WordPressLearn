@@ -45,11 +45,12 @@ function the_guid( $id = 0 ) {
 	echo get_the_guid($id);
 }
 
-
+//里面调用过滤器函数 调用the_content -> wpautop函数
 function the_content($more_link_text = '(more...)', $stripteaser = 0, $more_file = '') {
     $content = get_the_content($more_link_text, $stripteaser, $more_file);
     $content = apply_filters('the_content', $content);
-    $content = str_replace(']]>', ']]&gt;', $content);
+    $content = str_replace(']]>', ']]&gt;', $content);//把]]> 替换成]]&gt;
+
     echo $content;
 }
 

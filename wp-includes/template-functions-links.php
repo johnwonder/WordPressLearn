@@ -23,6 +23,7 @@ function permalink_anchor($mode = 'id') {
 }
 
 function get_permalink($id = 0) {
+    //echo 'get_permalink';
 	$rewritecode = array(
 		'%year%',
 		'%monthnum%',
@@ -38,6 +39,7 @@ function get_permalink($id = 0) {
 	);
 
 	$post = & get_post($id);
+    //echo $post->post_status;//publish
 	if ($post->post_status == 'static') {
 		return get_page_link($post->ID);
 	}

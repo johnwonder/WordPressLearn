@@ -29,6 +29,7 @@ class WP_Query {
 	var $is_comments_popup = false;
 	var $is_admin = false;
 
+    //初始化
 	function init () {
 		$this->is_single = false;
 		$this->is_page = false;
@@ -67,6 +68,7 @@ class WP_Query {
 		if ( !empty($query) || !isset($this->query) ) {
 			$this->init();
 			parse_str($query, $qv);
+            //echo $qv["withcomments"];
 			$this->query = $query;
 			$this->query_vars = $qv;
 		}
@@ -542,10 +544,11 @@ class WP_Query {
 
 		// Apply post-paging filters on where and join.  Only plugins that
 		// manipulate paging queries should use these hooks.
+        //只有处理页面查询的插件应该用这些钩子
 		$where = apply_filters('posts_where_paged', $where);
 		$where .= " GROUP BY $wpdb->posts.ID";
 		$join = apply_filters('posts_join_paged', $join);
-		$orderby = "post_" . $q['orderby'];
+		$orderby = "post_" . $q['orderby'];//$q  this->query_vars()
 		$orderby = apply_filters('posts_orderby', $orderby); 
 		$request = " SELECT $distinct * FROM $wpdb->posts $join WHERE 1=1".$where." ORDER BY " . $orderby . " $limits";
 
@@ -569,7 +572,7 @@ class WP_Query {
 				}
 			}
 		}
-
+        //echo $this->post_count;
 		$this->posts = apply_filters('the_posts', $this->posts);
 		$this->post_count = count($this->posts);
 		if ($this->post_count > 0) {
@@ -1285,7 +1288,7 @@ class WP_Rewrite {
 			$this->init();
 		}
 	}
-	//���캯��
+	//
 	function WP_Rewrite() {
 		//echo _e("construct");
 		$this->init();

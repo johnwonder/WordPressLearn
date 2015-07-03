@@ -14,22 +14,26 @@ require_once( dirname(__FILE__) . '/wp-config.php');
 
 $query_vars = array();
 
+    //$homesss = get_settings('home');
+    // echo $homesss.'sss'; //输出空
+
 // Process PATH_INFO and 404.
 if ((isset($_GET['error']) && $_GET['error'] == '404') ||
-		((! empty($_SERVER['PATH_INFO'])) &&
+		((! empty($_SERVER['PATH_INFO'])) && //包含由客户端提供的、跟在真实脚本名称之后并且在查询语句（query string）之前的路径信息，如果存在的话
 		('/' != $_SERVER['PATH_INFO']) &&
-		 (false === strpos($_SERVER['PATH_INFO'], '.php'))
+		 (false === strpos($_SERVER['PATH_INFO'], '.php')) ///返回 needle 存在于 haystack 字符串起始的位置(独立于 offset)。同时注意字符串位置是从0开始，而不是从1开始的
 		)) {
 
 	// If we match a rewrite rule, this will be cleared.
 	$error = '404';
 
 	// Fetch the rewrite rules.
+    //在classes.php中
 	$rewrite = $wp_rewrite->wp_rewrite_rules();
 
 	if (! empty($rewrite)) {
 		$pathinfo = $_SERVER['PATH_INFO'];
-		$req_uri = $_SERVER['REQUEST_URI'];      
+		$req_uri = $_SERVER['REQUEST_URI'];
 		$home_path = parse_url(get_settings('home'));
 		$home_path = $home_path['path'];
 
@@ -88,14 +92,17 @@ if ((isset($_GET['error']) && $_GET['error'] == '404') ||
 
 $wpvarstoreset = array('m','p','posts','w', 'cat','withcomments','s','search','exact', 'sentence', 'debug', 'calendar','page','paged','more','tb', 'pb','author','order','orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'feed', 'author_name', 'static', 'pagename', 'page_id', 'error', 'comments_popup');
 
-$wpvarstoreset = apply_filters('query_vars', $wpvarstoreset);
 
+$wpvarstoreset = apply_filters('query_vars', $wpvarstoreset);
+//var_dump($wpvarstoreset);//默认返回定义的array
 for ($i=0; $i<count($wpvarstoreset); $i += 1) {
 	$wpvar = $wpvarstoreset[$i];
 	if (!isset($$wpvar)) {
+        //echo $wpvar;
 		if (empty($_POST[$wpvar])) {
 			if (empty($_GET[$wpvar]) && empty($query_vars[$wpvar])) {
 				$$wpvar = '';
+                //echo $wpvar;
 			} elseif (!empty($_GET[$wpvar])) {
 				$$wpvar = $_GET[$wpvar];
 			} else {
@@ -114,12 +121,13 @@ if ( !empty($error) && '404' == $error ) {
 		@header('Status: 404 Not Found');
 	else
 		@header('HTTP/1.x 404 Not Found');
- } else if ( empty($feed) ) {
+ } else if ( empty($feed) ) {//$feed 在$wpvarstoreset中
 	@header('X-Pingback: '. get_bloginfo('pingback_url'));
 	@header('Content-type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
 } else {
+    //echo $withcomments;
 	// We're showing a feed, so WP is indeed the only thing that last changed
-	if ( $withcomments )
+	if ( $withcomments )//在$wpvarstoreset中
 		$wp_last_modified = mysql2date('D, d M Y H:i:s', get_lastcommentmodified('GMT'), 0).' GMT';
 	else 
 		$wp_last_modified = mysql2date('D, d M Y H:i:s', get_lastpostmodified('GMT'), 0).' GMT';
@@ -157,6 +165,7 @@ if ( !empty($error) && '404' == $error ) {
 }
 
 $use_gzipcompression = get_settings('gzipcompression');
+//var_dump($use_gzipcompression);//false
 
 $more_wpvars = array('posts_per_page', 'posts_per_archive_page', 'what_to_show', 'showposts', 'nopaging');
 
@@ -168,18 +177,22 @@ foreach (array_merge($wpvarstoreset, $more_wpvars) as $wpvar) {
 		$query_string .= $wpvar . '=' . rawurlencode($$wpvar);
 	}
 }
-
+    //echo $query_string;
 $query_string = apply_filters('query_string', $query_string);
 
 update_category_cache();
 get_currentuserinfo();
 
 // Call query posts to do the work.
+//echo $query_string;
 $posts = & query_posts($query_string);
 
 // Extract updated query vars back into global namespace.
+//导入到全局变量中去
+//var_dump($wp_query->query_vars);
 extract($wp_query->query_vars);
 
+//echo $withcomments.' show'; extract的结果 如果url中包含withcomments=true的querystring
 if ( is_single() || is_page() ) {
 	$more = 1;
 	$single = 1;
