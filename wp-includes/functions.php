@@ -237,26 +237,50 @@ function get_settings($setting) {
 
 	if ( empty($cache_settings) )
 	{
+        //echo 'is also empty';
+//        echo 'sds';
 		//echo $setting;
 		//getoptions(); 
 		$cache_settings = get_alloptions();
+
+        //var_dump($cache_settings);
+        //echo 'valueis '.$cache_settings->home;
 		//var_export($cache_settings);
 	}
+//    else
+//        echo 'ss';
+
+//    if($cache_settings->$setting == 'home')
+//    {
+//        echo 'home';
+//        echo $cache_settings->$setting;
+//    }
+
 	
 
 	if ( empty($cache_nonexistantoptions) )
 		$cache_nonexistantoptions = array();
 
 	if ('home' == $setting && '' == $cache_settings->home)
-		return apply_filters('option_' . $setting, $cache_settings->siteurl);
+    {
+        //echo $setting;
+        return apply_filters('option_' . $setting, $cache_settings->siteurl);
+    }
+
 
 	if ( isset($cache_settings->$setting) ) :
+        //echo $setting;
 		return apply_filters('option_' . $setting, $cache_settings->$setting);
 	else :
 		// for these cases when we're asking for an unknown option
 		if ( isset($cache_nonexistantoptions[$setting]) )
-			return false;
+        {
+//            echo $setting;
+            return false;
+        }
 
+
+        //echo $setting;
 		$option = $wpdb->get_var("SELECT option_value FROM $wpdb->options WHERE option_name = '$setting'");
 
 		if (!$option) :
@@ -266,8 +290,9 @@ function get_settings($setting) {
             return false;
         }
 		endif;
-
-		@ $kellogs = unserialize($option);
+        //echo $setting;
+        @ $kellogs = unserialize($option);
+        //var_dump($kellogs);
 		if ($kellogs !== FALSE)
 			return apply_filters('option_' . $setting, $kellogs);
 		else return apply_filters('option_' . $setting, $option);
@@ -289,23 +314,46 @@ function get_alloptions() {
 		$options = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options");
 	}
 	$wpdb->show_errors();
-
-	foreach ($options as $option) {
+    $all_options = new stdClass();
+    foreach ($options as $option) {
 		// "When trying to design a foolproof system, 
 		//  never underestimate the ingenuity of the fools :)" -- Dougal
 		if ('siteurl' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
-		if ('home' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
-		if ('category_base' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
+
+        if ('home' == $option->option_name)
+        {
+            //echo 'home start';
+            //echo $option->option_value;
+            $option->option_value = preg_replace('|/+$|', '', $option->option_value);
+            //echo 'select'.$option->option_value;
+        }
+
+		//echo '名字:'.$option->option_name.'值'.$option->option_value ;
+        if ('category_base' == $option->option_name) $option->option_value = preg_replace('|/+$|', '', $option->option_value);
 		@ $value = unserialize($option->option_value); ///@是PHP提供的错误信息屏蔽的专用符号
 		if ($value === FALSE)
 			$value = $option->option_value;
-		
+//        if ('home' == $option->option_name)
+//        {
+//            //echo 'home start';
+//            //echo $option->option_value;
+//            $option->option_value = preg_replace('|/+$|', '', $option->option_value);
+//            //echo 'here value is'.$value;
+//
+////            echo 'applyresult:'.apply_filters('pre_option_' . $option->option_name, $value);
+//        }
 		//echo $option->option_name;
-		$all_options = new stdClass();  //这里在PHP高版本下 必须调用
+		 //这里在PHP高版本下 必须调用
 		//应该是开发者自己加过滤器 从而可以调用pre_option_option方法
 		$all_options->{$option->option_name} =  apply_filters('pre_option_' . $option->option_name, $value);
+//        if ('home' == $option->option_name)
+//            echo 'apply value is'.$all_options->home.'bbbb';
 	}
 	return apply_filters('all_options', $all_options);
+
+    //echo 'gouride '.$all_options->home;
+
+    //return $aa;
 }
 
 function update_option($option_name, $newvalue) {
@@ -924,10 +972,10 @@ function merge_filters($tag) {
 //$value必须，可以被过滤器函数修改的值
 //$var 可选，若干个可以传递给过滤器函数的参数
 //过滤器(过滤器函数)的任务是要改变对象或变量的值
-function apply_filters($tag, $string) {
+function apply_filters($tag,$string) {
 	//echo $tag;
 	global $wp_filter;
-	
+	//echo $string->home;
 //	if($tag == 'the_permalink')
 //        echo $tag;
 	//$numargs  =  func_num_args ();
@@ -951,17 +999,37 @@ function apply_filters($tag, $string) {
 	// note the differences in the array keys
 	//print_r ( array_slice ( $input ,  1 ));
 
-	
-	
+
+//    if($tag == 'all_options')
+//    {
+//
+//        echo 'all_options';
+//        echo 'site'.$string->siteurl;
+//    }
 	$args = array_slice(func_get_args(), 2);//获取第三个参数开始的参数数组
 	//print_r($args);
 
 	merge_filters($tag);
-	
+//    if($tag == 'all_options')
+//    {
+//
+//        echo 'all_options';
+//        var_dump($string->home);
+//    }
 	if (!isset($wp_filter[$tag])) {
         //echo $tag;
+        //echo 'merge'.$string->name;
+//        if($tag == 'all_options')
+//        {
+//
+//            echo 'all_options';
+//            var_dump($string->home);
+//        }
+
 		return $string;
 	}
+//    else
+//        echo 'filter:'.$tag;
 	foreach ($wp_filter[$tag] as $priority => $functions) {
 		//echo $tag.'sss';//显示 bloginfo
 		if (!is_null($functions)) {

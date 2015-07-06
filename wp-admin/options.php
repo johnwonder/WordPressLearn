@@ -1,11 +1,12 @@
 <?php
 require_once('admin.php');
-
+//echo "24234t234t345y345";
 $title = __('Options');
 $this_file = 'options.php';
 $parent_file = 'options-general.php';
 
-$wpvarstoreset = array('action');
+$wpvarstoreset = array('action');//获取action
+//var_dump($wpvarstoreset);
 for ($i=0; $i<count($wpvarstoreset); $i += 1) {
 	$wpvar = $wpvarstoreset[$i];
 	if (!isset($$wpvar)) {
@@ -27,6 +28,7 @@ if ($user_level < 6)
 switch($action) {
 
 case 'update':
+    //echo 'update';
 	$any_changed = 0;
     
 	if (!$_POST['page_options']) {
@@ -39,7 +41,7 @@ case 'update':
 	}
 
     $options = $wpdb->get_results("SELECT $wpdb->options.option_id, option_name, option_type, option_value, option_admin_level FROM $wpdb->options WHERE option_name IN ($option_names)");
-
+    //var_dump($options);
 	// Save for later.
 	$old_siteurl = get_settings('siteurl');
 	$old_home = get_settings('home');
@@ -53,6 +55,7 @@ case 'update':
             if ($user_level >= $option->option_admin_level) {
                 $old_val = $option->option_value;
                 $new_val = trim($_POST[$option->option_name]);
+                //echo '名字'.$option->option_name.'值'.$new_val;
                 if( in_array($option->option_name, $nonbools) && ( $new_val == '0' || $new_val == '') )
 					$new_val = 'closed';
                 if ($new_val !== $old_val) {
@@ -61,7 +64,11 @@ case 'update':
 				}
             }
         }
+       // echo 'result:'.get_settings('home');
         unset($cache_settings); // so they will be re-read
+        //if ( empty($cache_settings) )
+           // echo '空了';
+         //echo 'result:'.get_settings('home');
         get_settings('siteurl'); // make it happen now
     } // end if options
     
