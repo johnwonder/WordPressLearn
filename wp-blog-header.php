@@ -30,10 +30,11 @@ if ((isset($_GET['error']) && $_GET['error'] == '404') ||
 	// Fetch the rewrite rules.
     //在classes.php中
 	$rewrite = $wp_rewrite->wp_rewrite_rules();
-
+    //var_dump($rewrite);
 	if (! empty($rewrite)) {
 		$pathinfo = $_SERVER['PATH_INFO'];
 		$req_uri = $_SERVER['REQUEST_URI'];
+        //echo $req_uri;
 		$home_path = parse_url(get_settings('home'));
 		$home_path = $home_path['path'];
 
@@ -185,6 +186,7 @@ get_currentuserinfo();
 
 // Call query posts to do the work.
 //echo $query_string;
+//哦 在这里
 $posts = & query_posts($query_string);
 
 // Extract updated query vars back into global namespace.
@@ -215,7 +217,7 @@ if ($pagenow != 'post.php' && $pagenow != 'edit.php') {
 	if ( get_settings('gzipcompression') ) 
 		gzip_compression();
 }
-
+    echo $_SERVER["REQUEST_URI"];
 // Template redirection
 //index.php中默认定义了WP_USE_THEMES
 //constant($name) 返回一个常量的值 
