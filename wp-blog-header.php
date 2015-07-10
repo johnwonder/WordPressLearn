@@ -172,13 +172,14 @@ $more_wpvars = array('posts_per_page', 'posts_per_archive_page', 'what_to_show',
 
 // Construct the query string.
 $query_string = '';
+    //这里获得p=1参数
 foreach (array_merge($wpvarstoreset, $more_wpvars) as $wpvar) {
 	if ($$wpvar != '') {
 		$query_string .= (strlen($query_string) < 1) ? '' : '&';
 		$query_string .= $wpvar . '=' . rawurlencode($$wpvar);
 	}
 }
-    //echo $query_string;
+    echo $query_string;
 $query_string = apply_filters('query_string', $query_string);
 
 update_category_cache();
