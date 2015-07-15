@@ -179,7 +179,7 @@ foreach (array_merge($wpvarstoreset, $more_wpvars) as $wpvar) {
 		$query_string .= $wpvar . '=' . rawurlencode($$wpvar);
 	}
 }
-    echo $query_string;
+    //echo $query_string;
 $query_string = apply_filters('query_string', $query_string);
 
 update_category_cache();
@@ -198,7 +198,7 @@ extract($wp_query->query_vars);
 //echo $withcomments.' show'; extract的结果 如果url中包含withcomments=true的querystring
 if ( is_single() || is_page() ) {
 	$more = 1;
-	$single = 1;
+    $single = 1;
 }
 
 // Issue a 404 if a permalink request doesn't match any posts.  Don't issue a
@@ -218,7 +218,7 @@ if ($pagenow != 'post.php' && $pagenow != 'edit.php') {
 	if ( get_settings('gzipcompression') ) 
 		gzip_compression();
 }
-    echo $_SERVER["REQUEST_URI"];
+    //echo $_SERVER["REQUEST_URI"];
 // Template redirection
 //index.php中默认定义了WP_USE_THEMES
 //constant($name) 返回一个常量的值 
@@ -240,6 +240,7 @@ if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 		include(get_home_template());
 		exit;
 	} else if ( is_single() && get_single_template() ) {
+        //跳转到具体某篇文章
 		include(get_single_template());
 		exit;
 	} else if ( is_page() && get_page_template() ) {
@@ -264,6 +265,7 @@ if ( defined('WP_USE_THEMES') && constant('WP_USE_THEMES') ) {
 		include(get_paged_template());
 		exit;
 	} else if ( file_exists(TEMPLATEPATH . "/index.php") ) {
+        //首页
 		include(TEMPLATEPATH . "/index.php");
 		exit;
 	}

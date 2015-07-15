@@ -21,19 +21,28 @@ function mysql2date($dateformatstring, $mysqlstring, $translate = true) {
 	if (empty($m)) {
 		return false;
 	}
-	$i = mktime(substr($m,11,2),substr($m,14,2),substr($m,17,2),substr($m,5,2),substr($m,8,2),substr($m,0,4)); 
-	if (!empty($month) && !empty($weekday) && $translate) {
-		$datemonth = $month[date('m', $i)];
+    //echo substr($m,11,2);//时
+	$i = mktime(substr($m,11,2),substr($m,14,2),substr($m,17,2),substr($m,5,2),substr($m,8,2),substr($m,0,4));
+	//echo date('m', $i); 月份
+    if (!empty($month) && !empty($weekday) && $translate) {
+		$datemonth = $month[date('m', $i)];//locale.php中本地化 June
 		$datemonth_abbrev = $month_abbrev[$datemonth];
+        //echo $datemonth_abbrev; //月份 Jun
 		$dateweekday = $weekday[date('w', $i)];
+        //echo $dateweekday;
 		$dateweekday_abbrev = $weekday_abbrev[$dateweekday]; 		
 		$dateformatstring = ' '.$dateformatstring;
+        //echo $dateformatstring;
 		$dateformatstring = preg_replace("/([^\\\])D/", "\\1".backslashit($dateweekday_abbrev), $dateformatstring);
-		$dateformatstring = preg_replace("/([^\\\])F/", "\\1".backslashit($datemonth), $dateformatstring);
-		$dateformatstring = preg_replace("/([^\\\])l/", "\\1".backslashit($dateweekday), $dateformatstring);
+        //echo $dateformatstring;
+        //echo backslashit($datemonth);
+        $dateformatstring = preg_replace("/([^\\\])F/", "$1".backslashit($datemonth), $dateformatstring);
+        //echo $dateformatstring;
+        $dateformatstring = preg_replace("/([^\\\])l/", "\\1".backslashit($dateweekday), $dateformatstring);
 		$dateformatstring = preg_replace("/([^\\\])M/", "\\1".backslashit($datemonth_abbrev), $dateformatstring);
-	
+        //echo $dateformatstring;
 		$dateformatstring = substr($dateformatstring, 1, strlen($dateformatstring)-1);
+        //echo $dateformatstring;
 	}
 	$j = @date($dateformatstring, $i);
 	if (!$j) {
@@ -1213,6 +1222,7 @@ function update_post_category_cache($post_ids) {
 		return;
 
 	if (is_array($post_ids))
+        //implode 返回一个字符串，其内容为由 glue 分割开的数组的值
 		$post_ids = implode(',', $post_ids);
 
 	$dogs = $wpdb->get_results("SELECT DISTINCT

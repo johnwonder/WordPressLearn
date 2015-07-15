@@ -42,7 +42,7 @@ function get_category_link($category_id) {
 function get_the_category_list($separator = '', $parents='') {
     $categories = get_the_category();
     if (empty($categories)) {
-			return apply_filters('the_category', __('Uncategorized'), $separator, $parents);
+			return apply_filters('the_category', __('Uncate'), $separator, $parents);
     }
 
     $thelist = '';
@@ -88,6 +88,7 @@ function get_the_category_list($separator = '', $parents='') {
                     break;
                 case '':
                 default:
+                    //默认分类链接
                     $thelist .= '<a href="' . get_category_link($category->cat_ID) . '" title="' . sprintf(__("View all posts in %s"), $category->cat_name) . '" rel="category tag">'.$category->cat_name.'</a>';
             }
             ++$i;
